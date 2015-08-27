@@ -8,6 +8,14 @@ def get_html(url):
 	response = urllib.request.urlopen(url);
 	return response.read();
 
+def get_pages_count(html):
+	soup = BeautifulSoup(html)
+	html_nav = soup.find('ul', id='nav-pages')
+	count = html_nav.findAll('li')[-1:]
+	print(count)
+
+
+
 def parse(html):
 	soup = BeautifulSoup(html)
 	html_content = soup.find('div', class_='content_left')
@@ -22,8 +30,8 @@ def parse(html):
 	return posts;
 
 def main():
-	print(parse(get_html(BASE_URL)));
-
+	#print(parse(get_html(BASE_URL)));
+	get_pages_count(get_html(BASE_URL))
 
 if __name__ == '__main__':
 	main();
