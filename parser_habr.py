@@ -17,7 +17,7 @@ def get_pages_count(html):
 
 
 def parse(html):
-	soup = BeautifulSoup(html)
+	soup = BeautifulSoup(html,  'html.parser')
 	html_content = soup.find('div', class_='content_left')
 	html_posts = html_content.findAll('div', class_='post')
 	posts = []
@@ -25,9 +25,18 @@ def parse(html):
 		posts.append({
 			'title' : html_post.find('h1', class_='title').a.text,
 			#'hubs' : 
-			'content' : html_post.find('div', class_='content').text
+			'content' : str(html_post.find('div', class_='content').text)
 			})
 	return posts
+
+def save(posts, path):
+	with open(path, 'w') as csvfile:
+		writer = csv.writer(csvfile)
+		writer.writerow(('Title', 'Text'))
+
+		for post in posts:
+			writer.writerow([post['title'], post['content']])
+
 
 def main():
 	page_count = get_pages_count(get_html(BASE_URL))
@@ -37,6 +46,7 @@ def main():
 		posts.extend(parse(get_html(BASE_URL + 'page%d' % page)))
 	for post in posts:
 		print(post);
+	save(posts, 'project.csv');
 
 if __name__ == '__main__':
 	main();
