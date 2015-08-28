@@ -9,10 +9,10 @@ def get_html(url):
 	return response.read();
 
 def get_pages_count(html):
-	soup = BeautifulSoup(html)
+	soup = BeautifulSoup(html,  'html.parser')
 	html_nav = soup.find('ul', id='nav-pages')
-	count = html_nav.findAll('li')[-1:]
-	print(count)
+	count = int(html_nav.findAll('a')[-1].text)
+	return count
 
 
 
@@ -27,11 +27,16 @@ def parse(html):
 			#'hubs' : 
 			'content' : html_post.find('div', class_='content').text
 			})
-	return posts;
+	return posts
 
 def main():
-	#print(parse(get_html(BASE_URL)));
-	get_pages_count(get_html(BASE_URL))
+	page_count = get_pages_count(get_html(BASE_URL))
+	print('Найдено страниц %d' % page_count)
+	posts = []
+	for page in range(1, page_count):
+		posts.extend(parse(get_html(BASE_URL + 'page%d' % page)))
+	for post in posts:
+		print(post);
 
 if __name__ == '__main__':
 	main();
